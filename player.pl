@@ -1,0 +1,1 @@
+display_player(_):- nl.
