@@ -1,26 +1,30 @@
 :-use_module(library(lists)).
+:-use_module(library(random)).
 
 :- 	dynamic
 	board/1.
 
 %Board, Saucer, Counter.
-board( [[40,41,42,43,44,45,46,47,48,49,10],
-		[39,0,0,0,0,0,0,0,0,0,11],
-		[38,0,0,0,0,0,0,0,0,0,12],
-		[37,0,0,0,0,0,0,0,0,0,13],
-		[36,0,0,0,0,0,0,0,0,0,14],
-		[35,0,0,0,0,0,0,0,0,0,15],
-		[34,0,0,0,0,0,0,0,0,0,16],
-		[33,0,0,0,0,0,0,0,0,0,17],
-		[32,0,0,0,0,0,0,0,0,0,18],
-		[31,0,0,0,0,0,0,0,0,0,19],
-		[30,29,28,27,26,25,24,23,22,21,20]]).
-		
+
+board_default( [[40,41,42,43,44,45,46,47,48,49,10],
+				[39,0,0,0,0,0,0,0,0,0,11],
+				[38,0,0,0,0,0,0,0,0,0,12],
+				[37,0,0,0,0,0,0,0,0,0,13],
+				[36,0,0,0,0,0,0,0,0,0,14],
+				[35,0,0,0,0,0,0,0,0,0,15],
+				[34,0,0,0,0,0,0,0,0,0,16],
+				[33,0,0,0,0,0,0,0,0,0,17],
+				[32,0,0,0,0,0,0,0,0,0,18],
+				[31,0,0,0,0,0,0,0,0,0,19],
+				[30,29,28,27,26,25,24,23,22,21,20]]).
+
+board(_).		
 
 counter([1000,2000,3000,4000,5000]).
 
 matrix_coord([0,1,2,3,4,5,6,7,8]).
 
+%display
 display_table(_):- 
 			nl,
 			matrix_coord(M),
@@ -35,6 +39,39 @@ display_table(_):-
 			%print_counter_border(_),
 			nl.
 
+			
+%reset
+reset(_):- 	board(TABLE),
+			board_default(DEFAULT),
+			asserta(board(DEFAULT)).
+			
+%random put trees in board
+place_trees(0).
+place_trees(N):- 
+					generate_X_Y_Val(X, Y, Val),
+					place_tree(X,Y,Val,N).
+					
+place_tree(X, Y, Val, N):- 
+							Val == 0,
+							place_elem_table(X, Y, 7),
+							N1 is N - 1,
+							place_trees(N1).
+							
+place_tree(X, Y, Val, N):- 
+							Val \= 0,
+							X = X, Y = Y,
+							place_trees(N).
+			
+
+generate_X_Y_Val(X, Y, Val):- 
+								L is 2.0,
+								U is 10.0,
+								random(L,U,X1),
+								random(L,U,Y1),
+								X is integer(X1),
+								Y is integer(Y1),
+								get_elem(X, Y, Val).
+			
 			
 			
 %get elem from board
@@ -55,13 +92,12 @@ display_elem_table(X, Y):-
 								nl.
 								
 %place element in table
-
-
 place_elem_table(X,Y,Elem):-
 								get_elem(X,Y,Val),
 								Val \= 'null',
 								board(TABLE),
 								place_elem(X,Y,Elem,TABLE,NewTable),
+								retract(board(TABLE)),
 								asserta(board(NewTable)).
 								
 place_elem_table(X,Y,Elem):-
@@ -202,25 +238,5 @@ print_counter_border(_):- 	print('---------------------------------'),
 %movement simulation
 
 /*player([ALI, X, Y , YELLOW, WHITE, PURPLE, BLUE, GREEN, SPECIAL])
-plant(PLAYER, X,Y, YELLOW, FALSE).*/
-
-					
-
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
+plant(PLAYER, X,Y, YELLOW, FALSE).*/			
 					
