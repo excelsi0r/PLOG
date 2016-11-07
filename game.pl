@@ -11,5 +11,6 @@ start(TYPE):-
 			place_trees(3),
 			
 			repeat, 
-				display_table(_).
-				%display_player(_),		%display_player(_).								
+				display_table(_),
+			!.
+				%display_player(_),		%display_player(_).

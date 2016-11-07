@@ -41,7 +41,7 @@ display_table(_):-
 
 			
 %reset
-reset(_):- 	board(TABLE),
+reset(_):- 	
 			board_default(DEFAULT),
 			asserta(board(DEFAULT)).
 			
