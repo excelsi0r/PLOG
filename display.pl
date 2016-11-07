@@ -1,5 +1,8 @@
 :-use_module(library(lists)).
 
+:- 	dynamic
+	board/1.
+
 %Board, Saucer, Counter.
 board( [[40,41,42,43,44,45,46,47,48,49,10],
 		[39,0,0,0,0,0,0,0,0,0,11],
@@ -48,8 +51,53 @@ get_elem(X, Y, Val):-
 %display elem
 display_elem_table(X, Y):-
 								get_elem(X, Y, Val),
-								print(Val).
+								print(Val),
+								nl.
 								
+%place element in table
+
+
+place_elem_table(X,Y,Elem):-
+								get_elem(X,Y,Val),
+								Val \= 'null',
+								board(TABLE),
+								place_elem(X,Y,Elem,TABLE,NewTable),
+								asserta(board(NewTable)).
+								
+place_elem_table(X,Y,Elem):-
+								X = X, Y = Y,
+								Elem = Elem,
+								write('Invalid Coords to place '), nl.
+								
+
+									
+place_elem(X,Y,Elem,[Head | Tail], [HeadNew | TailNew]):- 
+															Y == 0, 
+															place_elem_line(X,Elem,Head, HeadNew),
+															TailNew = Tail.
+										
+place_elem(X,Y,Elem,[Head | Tail], [HeadNew | TailNew]):- 
+															Y > 0, 
+															Y1 is Y - 1,
+															HeadNew = Head,
+															place_elem(X, Y1, Elem, Tail, TailNew).
+										
+										
+place_elem_line(X, Elem, [_| Tail], [HeadNew | TailNew]):- 
+																
+																X == 0,
+																HeadNew = Elem,
+																TailNew = Tail.
+
+place_elem_line(X,Elem,[Head | Tail], [HeadNew | TailNew]):- 
+
+																X > 0,
+																X1 is X - 1,
+																HeadNew = Head,
+																place_elem_line(X1, Elem, Tail, TailNew).
+						
+						
+						
 		
 			
 %Print Table

@@ -6,7 +6,8 @@ start(TYPE):-
 			
 			TYPE == 'pp',
 			
-			display_elem_table(12,11),
+			%display_elem_table(12,11),
+			place_elem_table(2,2,3),
 			
 			repeat, 
 				display_table(_).
