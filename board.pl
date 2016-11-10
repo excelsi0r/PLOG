@@ -5,9 +5,7 @@
 
 :- 	dynamic
 	board/1,
-	case/1,
-	case_p1/1,
-	case_p2/1.
+	case/1.
 
 %Board, Saucer, Counter.
 
@@ -34,35 +32,25 @@ case_default(	[1,1,1,1,1,1,1,1,1,1,
 
 case(_).				 
 
-counter([1000,2000,3000,4000,5000]).
-
 matrix_coord([0,1,2,3,4,5,6,7,8]).
 
 %display
 display_table(_):- 
-			nl,
-			matrix_coord(M),
-			board(TABLE),
-			counter(COUNTER),
-			print_matrix_up(M, 0),
-			print_table(TABLE, M, 0), 
-			print_matrix_up(M, 0),
-			%nl,
-			%print_counter_border(_),
-			%print_counter(COUNTER),
-			%print_counter_border(_),
-			nl.
+					nl,
+					matrix_coord(M),
+					board(TABLE),
+					print_matrix_up(M, 0),
+					print_table(TABLE, M, 0), 
+					print_matrix_up(M, 0),
+					nl.
 
 			
 %reset
-reset(_):- 	
+reset_board(_):- 	
 			board_default(DEFAULT),
 			asserta(board(DEFAULT)),
 			case_default(DEFCASE),
-			asserta(case(DEFCASE)),
-			case_player_default(DEFCASEPLAYER),
-			asserta(case_p1(DEFCASEPLAYER)),
-			asserta(case_p2(DEFCASEPLAYER)).
+			asserta(case(DEFCASE)).
 			
 %distribute flowers to players
 distribute_flowers(0,_):- 
@@ -130,7 +118,7 @@ place_tree(X, Y, Val, N):-
 
 generate_X_Y_Val(X, Y, Val):- 
 								L is 2.0,
-								U is 10.0,
+								U is 11.0,
 								random(L,U,X1),
 								random(L,U,Y1),
 								X is integer(X1),
@@ -158,6 +146,8 @@ display_elem_table(X, Y):-
 								
 %place element in table
 place_elem_table(X,Y,Elem):-
+								X >= 1, X =< 11,
+								Y >= 1, X =< 11,
 								get_elem(X,Y,Val),
 								Val \= 'null',
 								board(TABLE),
@@ -173,7 +163,7 @@ place_elem_table(X,Y,Elem):-
 
 									
 place_elem(X,Y,Elem,[Head | Tail], [HeadNew | TailNew]):- 
-															Y == 0, 
+															Y == 1, 
 															place_elem_line(X,Elem,Head, HeadNew),
 															TailNew = Tail.
 										
@@ -186,7 +176,7 @@ place_elem(X,Y,Elem,[Head | Tail], [HeadNew | TailNew]):-
 										
 place_elem_line(X, Elem, [_| Tail], [HeadNew | TailNew]):- 
 																
-																X == 0,
+																X == 1,
 																HeadNew = Elem,
 																TailNew = Tail.
 
@@ -259,8 +249,19 @@ print_elem(Cell):- Cell == 4, print('b').
 print_elem(Cell):- Cell == 5, print('p').
 print_elem(Cell):- Cell == 6, print('r').
 
-print_player(Cell):- Cell == 100, print('F').
-print_player(Cell):- Cell == 200, print('S').
+print_player(Cell):- 
+						Cell > 109, 
+						Cell < 150,
+						print('F').
+						
+print_player(Cell):- 	
+						Cell > 209, 
+						Cell < 250, 
+						print('S').
+						
+print_player(Cell):- 	
+						Cell == Cell,
+						print('E').
 
 
 							
@@ -277,31 +278,4 @@ print_matrix_up([Line|Rest], NUM):-
 									print(' '),
 									print(Line),
 									print_matrix_up(Rest, NUM + 1).
-									
-									
-%print counter
-print_counter([]):- nl.
-print_counter([Line | Rest]):- 
-								
-								print_counter_elem(Line),
-								print('  '),
-								print_counter(Rest).
-								
-%print counter elems
-print_counter_elem(Elem):- Elem == 1000, print('T<->F').
-print_counter_elem(Elem):- Elem == 2000, print('F<->F').
-print_counter_elem(Elem):- Elem == 3000, print('F-->O').
-print_counter_elem(Elem):- Elem == 4000, print('T-->O').
-print_counter_elem(Elem):- Elem == 5000, print('A-->5').
-print_counter_elem(Elem):- Elem == 6000, print('|   |').
-
-%print_counter border
-print_counter_border(_):- 	print('---------------------------------'),
-							nl.
-
-							
-%movement simulation
-
-/*player([ALI, X, Y , YELLOW, WHITE, PURPLE, BLUE, GREEN, SPECIAL])
-plant(PLAYER, X,Y, YELLOW, FALSE).*/			
 					
