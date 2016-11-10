@@ -12,5 +12,7 @@ start(TYPE):-
 			distribute_flowers(27,60.0),			
 			repeat, 
 				display_table(_),
+				display_p1_case(_),
+				display_p2_case(_),
 			!.
 				%display_player(_),		%display_player(_).

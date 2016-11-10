@@ -63,7 +63,16 @@ reset(_):-
 			asserta(case_p2(DEFCASEPLAYER)).
 			
 %distribute flowers to players
-distribute_flowers(0,_).
+distribute_flowers(0,_):- 
+							case_p1(CASEP1),
+							bbsort(CASEP1, NEWCASE1),
+							asserta(case_p1(NEWCASE1)),
+							
+							case_p1(CASEP2),
+							bbsort(CASEP2, NEWCASE2),
+							asserta(case_p2(NEWCASE2)).
+							
+									
 distribute_flowers(N,NFlowers):- 
 									generate_Index(NFlowers,Index1),
 									take_flower_from_case(Index1, Val),
