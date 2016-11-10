@@ -1,6 +1,8 @@
 :-use_module(library(lists)).
 :-use_module(library(random)).
 
+:-include('bubblesort.pl').
+
 :- 	dynamic
 	board/1,
 	case/1,
@@ -65,11 +67,11 @@ reset(_):-
 %distribute flowers to players
 distribute_flowers(0,_):- 
 							case_p1(CASEP1),
-							bbsort(CASEP1, NEWCASE1),
+							bubble_sort(CASEP1, NEWCASE1),
 							asserta(case_p1(NEWCASE1)),
 							
-							case_p1(CASEP2),
-							bbsort(CASEP2, NEWCASE2),
+							case_p2(CASEP2),
+							bubble_sort(CASEP2, NEWCASE2),
 							asserta(case_p2(NEWCASE2)).
 							
 									
