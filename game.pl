@@ -9,7 +9,7 @@ start(TYPE):-
 			%place_elem_table(2,2,3),
 			reset(_),
 			place_trees(3),
-			
+			distribute_flowers(27,60.0),			
 			repeat, 
 				display_table(_),
 			!.

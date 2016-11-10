@@ -2,7 +2,10 @@
 :-use_module(library(random)).
 
 :- 	dynamic
-	board/1.
+	board/1,
+	case/1,
+	case_p1/1,
+	case_p2/1.
 
 %Board, Saucer, Counter.
 
@@ -18,7 +21,16 @@ board_default( [[40,41,42,43,44,45,46,47,48,49,10],
 				[31,0,0,0,0,0,0,0,0,0,19],
 				[30,29,28,27,26,25,24,23,22,21,20]]).
 
-board(_).		
+board(_).
+
+case_default(	[1,1,1,1,1,1,1,1,1,1,
+				 2,2,2,2,2,2,2,2,2,2,
+				 3,3,3,3,3,3,3,3,3,3,
+				 4,4,4,4,4,4,4,4,4,4,
+				 5,5,5,5,5,5,5,5,5,5,
+				 6,6,6,6,6,6,6,6,6,6]).
+
+case(_).				 
 
 counter([1000,2000,3000,4000,5000]).
 
@@ -43,8 +55,50 @@ display_table(_):-
 %reset
 reset(_):- 	
 			board_default(DEFAULT),
-			asserta(board(DEFAULT)).
+			asserta(board(DEFAULT)),
+			case_default(DEFCASE),
+			asserta(case(DEFCASE)),
+			case_player_default(DEFCASEPLAYER),
+			asserta(case_p1(DEFCASEPLAYER)),
+			asserta(case_p2(DEFCASEPLAYER)).
 			
+%distribute flowers to players
+distribute_flowers(0,_).
+distribute_flowers(N,NFlowers):- 
+									generate_Index(NFlowers,Index1),
+									take_flower_from_case(Index1, Val),
+									give_flower_p1(Val),
+									
+									NFlowers1 is NFlowers - 1,
+									
+									generate_Index(NFlowers1,Index2),
+									take_flower_from_case(Index2, Val1),
+									give_flower_p2(Val1),
+									
+									N1 is N - 1,
+									NFlowers2 is NFlowers1 - 1,
+									distribute_flowers(N1, NFlowers2).
+generate_Index(NFlowers, Val):-
+
+									L is 1.0,
+									U is NFlowers,
+									random(L,U,Val1),
+									Val is integer(Val1).
+									
+take_flower_from_case(N, Val):- 
+									case(CASE),
+									nth1(N, CASE, Val,NEWCASE),
+									asserta(case(NEWCASE)).	
+
+give_flower_p1(Val):- 
+						case_p1(CASEP1), 
+						append(CASEP1, [Val], NEWCASE),
+						asserta(case_p1(NEWCASE)).
+give_flower_p2(Val):- 	
+						case_p2(CASEP2),
+						append(CASEP2, [Val], NEWCASE),
+						asserta(case_p2(NEWCASE)).
+									
 %random put trees in board
 place_trees(0).
 place_trees(N):- 
