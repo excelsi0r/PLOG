@@ -59,6 +59,7 @@ get_list_of_plays(X,Y,List):- 	Y == 11, get_list_of_plays_down(X,Y,List).
 get_list_of_plays(X,Y,List):- 	X == 11, get_list_of_plays_rigth(X,Y,List).
 
 get_list_of_plays_left(X, Y, List):- 
+										List1 = [], List2 = [], List3 = [],
 										get_list_inc(X, Y, 1, 0, List1),
 										get_list_inc(X, Y, 1, -1, List2),
 										get_list_inc(X, Y, 1, 1, List3),
@@ -67,6 +68,7 @@ get_list_of_plays_left(X, Y, List):-
 										append(Listtemp1, List3, List).
 										
 get_list_of_plays_up(X, Y, List):-	
+										List1 = [], List2 = [], List3 = [],
 										get_list_inc(X, Y, 0, -1, List1),
 										get_list_inc(X, Y, -1, -1, List2),
 										get_list_inc(X, Y, 1, -1, List3),
@@ -75,6 +77,7 @@ get_list_of_plays_up(X, Y, List):-
 										append(Listtemp1, List3, List).
 										
 get_list_of_plays_down(X, Y, List):-	
+										List1 = [], List2 = [], List3 = [],
 										get_list_inc(X, Y, 0, 1, List1),
 										get_list_inc(X, Y, -1, 1, List2),
 										get_list_inc(X, Y, 1, 1, List3),
@@ -83,13 +86,55 @@ get_list_of_plays_down(X, Y, List):-
 										append(Listtemp1, List3, List).
 										
 get_list_of_plays_rigth(X, Y, List):-	
-										get_list_inc(X, Y, -1, 0, List1),
-										get_list_inc(X, Y, -1, -1, List2),
-										get_list_inc(X, Y, -1, 1, List3),
+											
+										%List1 = [], List2 = [], List3 = [],
+										get_list_inc(X, Y, -1, 0, Listtemp, List),
 										
-										append(List1, List2, Listtemp1),
-										append(Listtemp1, List3, List).	
-								
+										nl.
+										%get_list_inc(X, Y, -1, -1, List2),
+										%get_list_inc(X, Y, -1, 1, List3),
+										
+										%append(List1, List2, Listtemp1),
+										%append(Listtemp1, List3, List).	
+	
+	
+get_list_inc(X, Y, Xinc, Yinc, Listtemp, List):- 
+
+													NewX is X + Xinc,
+													NewY is Y + Yinc,
+													
+													get_elem(NewX, NewY, Val),
+													
+													process_new_coords(NewX, NewY, Xinc, Yinc, Val,Listtemp, List).
+										
+										
+
+process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):-
+																	NewX > 1, NewX < 11,
+																	NewY > 1, NewX < 11,
+																	
+																	Val == 0,
+																	
+																	append(Listtemp, [[NewX | NewY]], List1),
+																
+																	get_list_inc(NewX, NewY, Xinc, Yinc,List1, List).
+															
+process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp,List):- 	
+																	
+																	Val == 7,
+																	print('calma'),													
+																	List = [].
+															
+															
+process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):- 	
+																	
+																	List = Listtemp,
+																	print('else'), nl.
+														
+
+
+
+
 
 %distribute flowers to players
 distribute_flowers(0,_):- 

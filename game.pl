@@ -99,7 +99,8 @@ play_p1(_):-
 				get_state(STATE),
 				STATE == 'p1',
 				get_player1(X,Y),
-				get_list_of_plays(X,Y,List).
+				get_list_of_plays(X,Y,List),
+				print(List).
 				
 				
 				
