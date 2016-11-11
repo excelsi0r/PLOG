@@ -9,26 +9,29 @@ state(_).
 %To play the game
 start(TYPE):- 
 				TYPE == 'pp',
-				
-				%display_elem_table(12,11),
-				%place_elem_table(2,2,3),
-				
+								
+				%set loading/start state 
 				set_state_start(_),
 				print_state(_),
 				
+				%reset content
 				reset_board(_),
 				reset_players(_),
 				
+				%place 3 random 3 in board and
+				%distribute random 27 of 60 to each player from the case
 				place_trees(3),
 				distribute_flowers(27,60),
 				
-
+				%initial positions for player 1 and player 2
 				place_p1(11,2),
 				place_p2(11,3),
 				
-				
+				%set state p1
 				set_state_p1(_),
 				print_state(_),
+				
+				play_p1(_),
 				
 				repeat, 
 						display_table(_),
@@ -39,6 +42,9 @@ start(TYPE):-
 						display_p2_score(_),
 				!.
 						%display_player(_),		%display_player(_).
+						
+%states
+get_state(Val):- state(Val).
 					
 set_state_start(_):- asserta(state('start')).
 set_state_p1(_):- asserta(state('p1')).
@@ -78,6 +84,40 @@ place_p2(X,Y):-
 				Val1 is integer(Val),
 				Elem is Val1 + 200,
 				place_elem_table(X, Y, Elem).
+
+				
+%player move play
+play_p1(_):- 	get_state(STATE),
+				STATE == 'end',
+				print('Game as ended. Not allowed to play').
+
+play_p1(_):- 	get_state(STATE),
+				STATE == 'p2',
+				print('Player 2 or "S" turn').
+				
+play_p1(_):-
+				get_state(STATE),
+				STATE == 'p1',
+				get_player1(X,Y),
+				print(X), print(Y).
+				
+				
+				
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+ 
+				
+				
 				
 
 

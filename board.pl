@@ -138,6 +138,50 @@ get_elem(X, Y, Val):-
 						X = X, Y = Y,
 						Val = 'null'.
 						
+%get player1
+get_player1(X,Y):- get_coords_p1(X, Y, 1,1).
+
+
+get_coords_p1(X, Y, Xtemp, Ytemp):- 
+										get_elem(Xtemp, Ytemp, Val),
+										check_and_next1(X, Y, Xtemp, Ytemp, Val).
+										
+check_and_next1(X, Y, Xtemp, Ytemp, Val):- 	Val > 109, Val < 150,
+											X is Xtemp, Y is Ytemp,
+											Val = Val.
+
+check_and_next1(X, Y, Xtemp, Ytemp, Val):-	
+											Val = Val,
+											calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY),
+											get_coords_p1(X,Y,NewX, NewY).
+											
+%get_player2
+get_player2(X,Y):- get_coords_p2(X, Y, 1,1).
+
+
+get_coords_p2(X, Y, Xtemp, Ytemp):- 
+										get_elem(Xtemp, Ytemp, Val),
+										check_and_next2(X, Y, Xtemp, Ytemp, Val).
+										
+check_and_next2(X, Y, Xtemp, Ytemp, Val):- 	Val > 209, Val < 250,
+											X is Xtemp, Y is Ytemp,
+											Val = Val.
+
+check_and_next2(X, Y, Xtemp, Ytemp, Val):-	
+											Val = Val,
+											calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY),
+											get_coords_p2(X,Y,NewX, NewY).
+											
+%iterate coords on board
+									
+calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY):-		
+															Xtemp == 11,
+															NewX is 1,
+															NewY is Ytemp + 1.
+
+calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY):- 	NewX is Xtemp + 1,
+															NewY is Ytemp.
+															
 %display elem
 display_elem_table(X, Y):-
 								get_elem(X, Y, Val),
