@@ -52,6 +52,45 @@ reset_board(_):-
 			case_default(DEFCASE),
 			asserta(case(DEFCASE)).
 			
+%APARTIR DE XY VERIFICAR COORDENADAS VALIDAS NO TABULEIRO PARA SE JOGAR
+get_list_of_plays(X,Y,List):- 	X == 1, get_list_of_plays_left(X,Y,List).
+get_list_of_plays(X,Y,List):- 	Y == 1, get_list_of_plays_up(X,Y,List).
+get_list_of_plays(X,Y,List):- 	Y == 11, get_list_of_plays_down(X,Y,List).
+get_list_of_plays(X,Y,List):- 	X == 11, get_list_of_plays_rigth(X,Y,List).
+
+get_list_of_plays_left(X, Y, List):- 
+										get_list_inc(X, Y, 1, 0, List1),
+										get_list_inc(X, Y, 1, -1, List2),
+										get_list_inc(X, Y, 1, 1, List3),
+										
+										append(List1, List2, Listtemp1),
+										append(Listtemp1, List3, List).
+										
+get_list_of_plays_up(X, Y, List):-	
+										get_list_inc(X, Y, 0, -1, List1),
+										get_list_inc(X, Y, -1, -1, List2),
+										get_list_inc(X, Y, 1, -1, List3),
+										
+										append(List1, List2, Listtemp1),
+										append(Listtemp1, List3, List).
+										
+get_list_of_plays_down(X, Y, List):-	
+										get_list_inc(X, Y, 0, 1, List1),
+										get_list_inc(X, Y, -1, 1, List2),
+										get_list_inc(X, Y, 1, 1, List3),
+										
+										append(List1, List2, Listtemp1),
+										append(Listtemp1, List3, List).
+										
+get_list_of_plays_rigth(X, Y, List):-	
+										get_list_inc(X, Y, -1, 0, List1),
+										get_list_inc(X, Y, -1, -1, List2),
+										get_list_inc(X, Y, -1, 1, List3),
+										
+										append(List1, List2, Listtemp1),
+										append(Listtemp1, List3, List).	
+								
+
 %distribute flowers to players
 distribute_flowers(0,_):- 
 							case_p1(CASEP1),
@@ -172,7 +211,7 @@ check_and_next2(X, Y, Xtemp, Ytemp, Val):-
 											calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY),
 											get_coords_p2(X,Y,NewX, NewY).
 											
-%iterate coords on board
+%iterate coords on board 
 									
 calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY):-		
 															Xtemp == 11,
