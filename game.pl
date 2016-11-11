@@ -33,15 +33,14 @@ start(TYPE):-
 				
 				play_p1(2,2,2),
 				
-				repeat, 
-						display_table(_),
-						display_p1_case(_),
-						display_p1_score(_),
-						nl,
-						display_p2_case(_),
-						display_p2_score(_),
-				!.
-						%display_player(_),		%display_player(_).
+				
+				
+				display_table(_),
+				display_p1_case(_),
+				display_p1_score(_),
+				nl,
+				display_p2_case(_),
+				display_p2_score(_).
 						
 %states
 get_state(Val):- state(Val).
@@ -110,7 +109,9 @@ play_p1(XPlay,YPlay,Flower):-
 								print(ValPosition), nl,
 								
 								check_if_flower_exists_p1(Flower, ValFlower),
-								print(ValFlower).
+								print(ValFlower),
+								
+								delete_flower_p1(Flower).
 				
 				
 %check if coords exsit in list of possible plays
@@ -134,9 +135,16 @@ check_if_flower_exists_p1(Flower, ValFlower):-
 												case_p1(CASE),
 												exists_Flower(Flower, CASE, ValFlower).
 												
+check_if_flower_exists_p2(Flower, ValFlower):- 	
+												case_p2(CASE),
+												exists_Flower(Flower, CASE, ValFlower).
+												
 exists_Flower(Flower, [], ValFlower):- 	Flower = Flower, ValFlower = 'false'.
 exists_Flower(Flower, [FlowerN | _], ValFlower):- Flower == FlowerN, ValFlower = 'true'.	
-exists_Flower(Flower, [_ | Rest], ValFlower):- exists_Flower(Flower, Rest, ValFlower).									
+exists_Flower(Flower, [_ | Rest], ValFlower):- exists_Flower(Flower, Rest, ValFlower).	
+
+%retirar element da bolsa do jogador
+							
 
 												
 												

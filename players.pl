@@ -47,6 +47,14 @@ display_p2_score(_):-
 						print('Score: '), 
 						print(P2),
 						nl.
+						
+delete_flower_p1(Flower):- 	case_p1(CASE),
+							select(Flower, CASE, List),
+							asserta(case_p1(List)).
+							
+delete_flower_p2(Flower):- 	case_p2(CASE),
+							select(Flower, CASE, List),
+							asserta(case_p1(List)).
 
 print_case([]).
 print_case([Elem | Rest]):- 
