@@ -116,6 +116,10 @@ process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):-
 																	append(Listtemp, [[NewX , NewY]], List1),
 																
 																	get_list_inc(NewX, NewY, Xinc, Yinc, List1, List).
+																	
+process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):-
+																	Val > 0, Val < 7,
+																	get_list_inc(NewX, NewY, Xinc, Yinc, Listtemp, List).
 															
 process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):- 	Val == 7,
 																	List = [],
