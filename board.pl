@@ -54,48 +54,46 @@ reset_board(_):-
 			
 %APARTIR DE XY VERIFICAR COORDENADAS VALIDAS NO TABULEIRO PARA SE JOGAR
 get_list_of_plays(X,Y,List):- 	X == 1, get_list_of_plays_left(X,Y,List).
+get_list_of_plays(X,Y,List):- 	X == 11, get_list_of_plays_rigth(X,Y,List).
 get_list_of_plays(X,Y,List):- 	Y == 1, get_list_of_plays_up(X,Y,List).
 get_list_of_plays(X,Y,List):- 	Y == 11, get_list_of_plays_down(X,Y,List).
-get_list_of_plays(X,Y,List):- 	X == 11, get_list_of_plays_rigth(X,Y,List).
+
 
 get_list_of_plays_left(X, Y, List):- 
-										List1 = [], List2 = [], List3 = [],
-										get_list_inc(X, Y, 1, 0, List1),
-										get_list_inc(X, Y, 1, -1, List2),
-										get_list_inc(X, Y, 1, 1, List3),
+										Listtemp = [],
+										get_list_inc(X, Y, 1, 0, Listtemp,List1),Listtemp = [],
+										get_list_inc(X, Y, 1, -1, Listtemp,List2),Listtemp = [],
+										get_list_inc(X, Y, 1, 1, Listtemp,List3),
 										
 										append(List1, List2, Listtemp1),
 										append(Listtemp1, List3, List).
 										
 get_list_of_plays_up(X, Y, List):-	
-										List1 = [], List2 = [], List3 = [],
-										get_list_inc(X, Y, 0, -1, List1),
-										get_list_inc(X, Y, -1, -1, List2),
-										get_list_inc(X, Y, 1, -1, List3),
+										Listtemp = [],
+										get_list_inc(X, Y, 0, -1,Listtemp, List1),Listtemp = [],
+										get_list_inc(X, Y, -1, -1,Listtemp, List2),Listtemp = [],
+										get_list_inc(X, Y, 1, -1, Listtemp,List3),
 										
 										append(List1, List2, Listtemp1),
 										append(Listtemp1, List3, List).
 										
 get_list_of_plays_down(X, Y, List):-	
-										List1 = [], List2 = [], List3 = [],
-										get_list_inc(X, Y, 0, 1, List1),
-										get_list_inc(X, Y, -1, 1, List2),
-										get_list_inc(X, Y, 1, 1, List3),
+										Listtemp = [],
+										get_list_inc(X, Y, 0, 1, Listtemp,List1),Listtemp = [],
+										get_list_inc(X, Y, -1, 1, Listtemp,List2),Listtemp = [],
+										get_list_inc(X, Y, 1, 1, Listtemp,List3),
 										
 										append(List1, List2, Listtemp1),
 										append(Listtemp1, List3, List).
 										
 get_list_of_plays_rigth(X, Y, List):-	
-											
-										%List1 = [], List2 = [], List3 = [],
-										get_list_inc(X, Y, -1, 0, Listtemp, List),
+										Listtemp = [],
+										get_list_inc(X, Y, -1, 0, Listtemp, List1), Listtemp = [],
+										get_list_inc(X, Y, -1, -1, Listtemp, List2),Listtemp = [],
+										get_list_inc(X, Y, -1, 1, Listtemp, List3),
 										
-										nl.
-										%get_list_inc(X, Y, -1, -1, List2),
-										%get_list_inc(X, Y, -1, 1, List3),
-										
-										%append(List1, List2, Listtemp1),
-										%append(Listtemp1, List3, List).	
+										append(List1, List2, Listtemp1),
+										append(Listtemp1, List3, List).	
 	
 	
 get_list_inc(X, Y, Xinc, Yinc, Listtemp, List):- 
@@ -105,7 +103,7 @@ get_list_inc(X, Y, Xinc, Yinc, Listtemp, List):-
 													
 													get_elem(NewX, NewY, Val),
 													
-													process_new_coords(NewX, NewY, Xinc, Yinc, Val,Listtemp, List).
+													process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List).
 										
 										
 
@@ -115,21 +113,22 @@ process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):-
 																	
 																	Val == 0,
 																	
-																	append(Listtemp, [[NewX | NewY]], List1),
+																	append(Listtemp, [[NewX , NewY]], List1),
 																
-																	get_list_inc(NewX, NewY, Xinc, Yinc,List1, List).
+																	get_list_inc(NewX, NewY, Xinc, Yinc, List1, List).
 															
-process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp,List):- 	
-																	
-																	Val == 7,
-																	print('calma'),													
-																	List = [].
+process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):- 	Val == 7,
+																	List = [],
+																	NewX = NewX, NewY = NewY, 
+																	Xinc = Xinc, Yinc = Yinc, 
+																	Listtemp = Listtemp.
 															
 															
-process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):- 	
-																	
-																	List = Listtemp,
-																	print('else'), nl.
+process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):- 	List = Listtemp,
+																	Val = Val, 
+																	NewX = NewX, NewY = NewY, 
+																	Xinc = Xinc, Yinc = Yinc.
+																
 														
 
 
