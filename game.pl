@@ -31,7 +31,7 @@ start(TYPE):-
 				set_state_p1(_),
 				print_state(_),
 				
-				play_p1(_),
+				play_p1(2,2,2),
 				
 				repeat, 
 						display_table(_),
@@ -87,40 +87,58 @@ place_p2(X,Y):-
 
 				
 %player move play
-play_p1(_):- 	get_state(STATE),
-				STATE == 'end',
-				print('Game as ended. Not allowed to play').
+play_p1(XPlay,YPlay,Flower):- 
+								get_state(STATE),
+								STATE == 'end',
+								print('Game has ended. Not allowed to play'),
+								XPlay = XPlay, YPlay = YPlay, Flower = Flower.
 
-play_p1(_):- 	get_state(STATE),
-				STATE == 'p2',
-				print('Player 2 or "S" turn').
+play_p1(XPlay,YPlay,Flower):- 	
+								get_state(STATE),
+								STATE == 'p2',
+								print('Player 2 or "S" turn'),
+								XPlay = XPlay, YPlay = YPlay, Flower = Flower.
 				
-play_p1(_):-
-				get_state(STATE),
-				STATE == 'p1',
-				get_player1(X,Y),
-				get_list_of_plays(X,Y,List),
-				print(List).
+play_p1(XPlay,YPlay,Flower):-
+								get_state(STATE),
+								STATE == 'p1',
+								
+								get_player1(X,Y),
+								get_list_of_plays(X,Y,List),
+								
+								check_if_valid_position(XPlay,YPlay,List,ValPosition),
+								print(ValPosition), nl,
+								
+								check_if_flower_exists_p1(Flower, ValFlower),
+								print(ValFlower).
 				
 				
-				
+%check if coords exsit in list of possible plays
+check_if_valid_position(XPlay, YPlay, [], Val):- Val = 	'false',
+														XPlay = XPlay, YPlay = YPlay.
 
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
- 
-				
-				
-				
+check_if_valid_position(XPlay, YPlay, [P|Rest], Val):- 	
+														check_point(XPlay,YPlay,P,Rest,Val).
+
+check_point(XPlay,YPlay,[X | Y],Rest, Val):- 	
+												X == XPlay, Y == YPlay, Val = 'true', Rest = Rest.
+												
+check_point(XPlay,YPlay,[X | Y],Rest, Val):-	X = X, Y = Y,
+												check_if_valid_position(XPlay, YPlay, Rest, Val).
+	
 
 
+	
+%check_if_flower_exists_p1
+check_if_flower_exists_p1(Flower, ValFlower):- 	
+												case_p1(CASE),
+												exists_Flower(Flower, CASE, ValFlower).
+												
+exists_Flower(Flower, [], ValFlower):- 	Flower = Flower, ValFlower = 'false'.
+exists_Flower(Flower, [FlowerN | _], ValFlower):- Flower == FlowerN, ValFlower = 'true'.	
+exists_Flower(Flower, [_ | Rest], ValFlower):- exists_Flower(Flower, Rest, ValFlower).									
 
-
+												
+												
+												
+												

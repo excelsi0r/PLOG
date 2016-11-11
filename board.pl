@@ -47,10 +47,10 @@ display_table(_):-
 			
 %reset
 reset_board(_):- 	
-			board_default(DEFAULT),
-			asserta(board(DEFAULT)),
-			case_default(DEFCASE),
-			asserta(case(DEFCASE)).
+					board_default(DEFAULT),
+					asserta(board(DEFAULT)),
+					case_default(DEFCASE),
+					asserta(case(DEFCASE)).
 			
 %APARTIR DE XY VERIFICAR COORDENADAS VALIDAS NO TABULEIRO PARA SE JOGAR
 get_list_of_plays(X,Y,List):- 	X == 1, get_list_of_plays_left(X,Y,List).
@@ -113,7 +113,8 @@ process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):-
 																	
 																	Val == 0,
 																	
-																	append(Listtemp, [[NewX , NewY]], List1),
+																	P = [[NewX | NewY]],
+																	append(Listtemp, P, List1),
 																
 																	get_list_inc(NewX, NewY, Xinc, Yinc, List1, List).
 																	
