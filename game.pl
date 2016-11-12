@@ -134,7 +134,8 @@ play_p1(XPlay,YPlay,Flower):-
 								
 								
 				
-%================================================================================================		
+%================================================================================================
+check_scores_and_set_state(_).		
 %check if coords exsit in list of possible plays
 check_if_valid_position(XPlay, YPlay, [], Val):- Val = 	'false',
 														XPlay = XPlay, YPlay = YPlay.
@@ -318,14 +319,14 @@ move_p1(P1Place, NextP1Place, P2Place):-		P1Place = P1Place,
 												NewPlace < P2Place,									
 												assert_place_p1(NewPlace).
 												
-move_p1(P1Place, NextP1Place, P2Place):-		assert_place_p1(NextP1Place).
+move_p1(_, NextP1Place, _):-		assert_place_p1(NextP1Place).
 
 assert_place_p1(NewPlace):- 		
 										NewPlace > 49,
 										Nindex is NewPlace - 50,										
 										N is Nindex + 10,
 										get_coords_elem(X, Y, N),
-										Player is N + 100.
+										Player is N + 100,
 										place_elem_table(X, Y, Player).
 										
 										
