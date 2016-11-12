@@ -69,19 +69,19 @@ get_list_of_plays_left(X, Y, List):-
 										append(Listtemp1, List3, List).
 										
 get_list_of_plays_up(X, Y, List):-	
-										Listtemp = [],
-										get_list_inc(X, Y, 0, -1,Listtemp, List1),Listtemp = [],
-										get_list_inc(X, Y, -1, -1,Listtemp, List2),Listtemp = [],
-										get_list_inc(X, Y, 1, -1, Listtemp,List3),
+										Listtemp = [], 
+										get_list_inc(X, Y, 0, 1,Listtemp, List1),Listtemp = [],
+										get_list_inc(X, Y, -1, 1,Listtemp, List2),Listtemp = [],
+										get_list_inc(X, Y, 1, 1, Listtemp,List3),
 										
 										append(List1, List2, Listtemp1),
 										append(Listtemp1, List3, List).
 										
 get_list_of_plays_down(X, Y, List):-	
 										Listtemp = [],
-										get_list_inc(X, Y, 0, 1, Listtemp,List1),Listtemp = [],
-										get_list_inc(X, Y, -1, 1, Listtemp,List2),Listtemp = [],
-										get_list_inc(X, Y, 1, 1, Listtemp,List3),
+										get_list_inc(X, Y, 0, -1, Listtemp,List1),Listtemp = [],
+										get_list_inc(X, Y, -1, -1, Listtemp,List2),Listtemp = [],
+										get_list_inc(X, Y, 1, -1, Listtemp,List3),
 										
 										append(List1, List2, Listtemp1),
 										append(Listtemp1, List3, List).
@@ -109,7 +109,7 @@ get_list_inc(X, Y, Xinc, Yinc, Listtemp, List):-
 
 process_new_coords(NewX, NewY, Xinc, Yinc, Val, Listtemp, List):-
 																	NewX > 1, NewX < 11,
-																	NewY > 1, NewX < 11,
+																	NewY > 1, NewY < 11,
 																	
 																	Val == 0,
 																	
@@ -225,40 +225,52 @@ get_elem(X, Y, Val):-
 get_elem(X, Y, Val):- 
 						X = X, Y = Y,
 						Val = 'null'.
-						
+%get coords by elem
+get_coords_elem(X, Y, Elem):-  get_coords(X, Y, Elem, 1,1).
+
+get_coords(X, Y, Elem, Xi, Yi):-	get_elem(Xi, Yi, Val),
+									Val == Elem,
+									X = Xi, Y = Yi.
+
+get_coords(X, Y, Elem, Xi, Yi):-	calculate_next_board_coords(Xi, Yi, NewX, NewY),
+									Elem = Elem,
+									get_coords(X, Y, Elem, NewX, NewY).
+								
 %get player1
-get_player1(X,Y):- get_coords_p1(X, Y, 1,1).
+get_player1(X,Y, Stat):- get_coords_p1(X, Y, 1,1, Stat).
 
 
-get_coords_p1(X, Y, Xtemp, Ytemp):- 
-										get_elem(Xtemp, Ytemp, Val),
-										check_and_next1(X, Y, Xtemp, Ytemp, Val).
+get_coords_p1(X, Y, Xtemp, Ytemp, Stat):- 
+											get_elem(Xtemp, Ytemp, Val),
+											check_and_next1(X, Y, Xtemp, Ytemp, Val, Stat).
 										
-check_and_next1(X, Y, Xtemp, Ytemp, Val):- 	Val > 109, Val < 150,
-											X is Xtemp, Y is Ytemp,
-											Val = Val.
+check_and_next1(X, Y, Xtemp, Ytemp, Val, Stat):- 	Val > 109, Val < 150,
+													Stat = Val,
+													X is Xtemp, Y is Ytemp,
+													Val = Val.
 
-check_and_next1(X, Y, Xtemp, Ytemp, Val):-	
-											Val = Val,
-											calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY),
-											get_coords_p1(X,Y,NewX, NewY).
+check_and_next1(X, Y, Xtemp, Ytemp, Val, Stat):-	
+													Val = Val,
+													calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY),
+													get_coords_p1(X,Y,NewX, NewY, Stat).
 											
 %get_player2
-get_player2(X,Y):- get_coords_p2(X, Y, 1,1).
+get_player2(X,Y, Stat):- get_coords_p2(X, Y, 1,1, Stat).
 
 
-get_coords_p2(X, Y, Xtemp, Ytemp):- 
+get_coords_p2(X, Y, Xtemp, Ytemp, Stat):- 
 										get_elem(Xtemp, Ytemp, Val),
-										check_and_next2(X, Y, Xtemp, Ytemp, Val).
+										check_and_next2(X, Y, Xtemp, Ytemp, Val, Stat).
 										
-check_and_next2(X, Y, Xtemp, Ytemp, Val):- 	Val > 209, Val < 250,
-											X is Xtemp, Y is Ytemp,
-											Val = Val.
+check_and_next2(X, Y, Xtemp, Ytemp, Val, Stat):- 	Val > 209, Val < 250,
+													Stat = Val,
+													X is Xtemp, Y is Ytemp,
+													Val = Val.
 
-check_and_next2(X, Y, Xtemp, Ytemp, Val):-	
-											Val = Val,
-											calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY),
-											get_coords_p2(X,Y,NewX, NewY).
+check_and_next2(X, Y, Xtemp, Ytemp, Val, Stat):-	
+													Val = Val,
+													calculate_next_board_coords(Xtemp, Ytemp, NewX, NewY),
+													get_coords_p2(X,Y,NewX, NewY, Stat).
 											
 %iterate coords on board 
 									
