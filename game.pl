@@ -31,9 +31,15 @@ start(TYPE):-
 				set_state_p1(_),
 				print_state(_),
 				
-				play_p1(2,2,2),
 				
+				display_table(_),
+				display_p1_case(_),
+				display_p1_score(_),
+				nl,
+				display_p2_case(_),
+				display_p2_score(_),
 				
+				play_p1(4,2,2),
 				
 				display_table(_),
 				display_p1_case(_),
@@ -41,6 +47,7 @@ start(TYPE):-
 				nl,
 				display_p2_case(_),
 				display_p2_score(_).
+				
 						
 %states
 get_state(Val):- state(Val).
@@ -111,9 +118,15 @@ play_p1(XPlay,YPlay,Flower):-
 								check_if_flower_exists_p1(Flower, ValFlower),
 								print(ValFlower),
 								
-								delete_flower_p1(Flower).
+								delete_flower_p1(Flower),
+								place_elem_table(XPlay, YPlay, Flower),
+								
+								
+								calculate_score(XPlay, YPlay, Flower, Scorelist),
+								length(Scorelist, Score),
+								print(Score).
 				
-				
+%================================================================================================		
 %check if coords exsit in list of possible plays
 check_if_valid_position(XPlay, YPlay, [], Val):- Val = 	'false',
 														XPlay = XPlay, YPlay = YPlay.
@@ -143,7 +156,125 @@ exists_Flower(Flower, [], ValFlower):- 	Flower = Flower, ValFlower = 'false'.
 exists_Flower(Flower, [FlowerN | _], ValFlower):- Flower == FlowerN, ValFlower = 'true'.	
 exists_Flower(Flower, [_ | Rest], ValFlower):- exists_Flower(Flower, Rest, ValFlower).	
 
-%retirar element da bolsa do jogador
+%caculate score of play
+calculate_score(XPlay, YPlay, Flower, Score):- 		calculate_arround(XPlay, YPlay, Flower, Score).
+
+															
+															
+calculate_arround(XPlay, YPlay, Flower, Scoretemp):-
+																caculate_left(XPlay, YPlay, Flower, Score1),
+																caculate_right(XPlay, YPlay, Flower, Score2),
+																caculate_up(XPlay, YPlay, Flower, Score3),
+																caculate_down(XPlay, YPlay, Flower, Score4),
+																
+																
+																append(Score1, Score2, Scoretemp1),
+																append(Scoretemp1, Score3, Scoretemp2),
+																append(Scoretemp2, Score4, Scoretemp3),
+																
+																append(Scoretemp3, [1], Scoretemp).
+															
+%search left																										
+caculate_left(X, Y, Flower, Scoretemp):-	
+												X > 1, X < 11,
+												Y > 1, Y < 11,
+												
+												XNew is X - 1,
+												
+												XNew > 1,
+
+												get_elem(XNew, Y, Elem),
+												next_left(XNew, Y, Flower, Elem, Scoretemp).
+										
+caculate_left(X, Y, Flower, Scoretemp):- 		List1 = [],
+												append(List1, [], Scoretemp),
+												X = X, Y = Y, Flower = Flower, Scoretemp = Scoretemp.
+										
+next_left(X, Y, Flower,Elem, Scoretemp):-		
+												Flower == Elem, 												
+												caculate_left(X, Y, Flower, List1),
+												append(List1, [1], Scoretemp).
+																	
+next_left(X, Y, Flower,Elem, Scoretemp):- 	List1 = [],
+											append(List1,  [], Scoretemp),
+											X = X, Y = Y, Flower = Flower, Elem = Elem, Scoretemp = Scoretemp.
+											
+%caculate_rigth
+caculate_right(X, Y, Flower, Scoretemp):-	
+												X > 1, X < 11,
+												Y > 1, Y < 11,
+												
+												XNew is X + 1,
+												
+												XNew < 11,
+
+												get_elem(XNew, Y, Elem),
+												next_right(XNew, Y, Flower, Elem, Scoretemp).
+										
+caculate_right(X, Y, Flower, Scoretemp):- 		List1 = [],
+												append(List1, [], Scoretemp),
+												X = X, Y = Y, Flower = Flower, Scoretemp = Scoretemp.
+										
+next_right(X, Y, Flower,Elem, Scoretemp):-		
+												Flower == Elem, 												
+												caculate_right(X, Y, Flower, List1),
+												append(List1, [1], Scoretemp).
+																	
+next_right(X, Y, Flower,Elem, Scoretemp):- 	List1 = [],
+											append(List1,  [], Scoretemp),
+											X = X, Y = Y, Flower = Flower, Elem = Elem, Scoretemp = Scoretemp.
+											
+%caculate_down
+caculate_down(X, Y, Flower, Scoretemp):-	
+												X > 1, X < 11,
+												Y > 1, Y < 11,
+												
+												YNew is Y + 1,
+												
+												YNew < 11,
+
+												get_elem(X, YNew, Elem),
+												next_down(X, YNew, Flower, Elem, Scoretemp).
+										
+caculate_down(X, Y, Flower, Scoretemp):- 		List1 = [],
+												append(List1, [], Scoretemp),
+												X = X, Y = Y, Flower = Flower, Scoretemp = Scoretemp.
+										
+next_down(X, Y, Flower,Elem, Scoretemp):-		
+												Flower == Elem, 												
+												caculate_down(X, Y, Flower, List1),
+												append(List1, [1], Scoretemp).
+																	
+next_down(X, Y, Flower,Elem, Scoretemp):- 	List1 = [],
+											append(List1,  [], Scoretemp),
+											X = X, Y = Y, Flower = Flower, Elem = Elem, Scoretemp = Scoretemp.
+											
+%caculate_up
+caculate_up(X, Y, Flower, Scoretemp):-	
+												X > 1, X < 11,
+												Y > 1, Y < 11,
+												
+												YNew is Y - 1,
+												
+												YNew > 1,
+
+												get_elem(X ,YNew, Elem),
+												next_up(X, YNew, Flower, Elem, Scoretemp).
+										
+caculate_up(X, Y, Flower, Scoretemp):- 			List1 = [],
+												append(List1, [], Scoretemp),
+												X = X, Y = Y, Flower = Flower, Scoretemp = Scoretemp.
+										
+next_up(X, Y, Flower,Elem, Scoretemp):-		
+												Flower == Elem, 												
+												caculate_up(X, Y, Flower, List1),
+												append(List1, [1], Scoretemp).
+																	
+next_up(X, Y, Flower,Elem, Scoretemp):- 	List1 = [],
+											append(List1,  [], Scoretemp),
+											X = X, Y = Y, Flower = Flower, Elem = Elem, Scoretemp = Scoretemp.
+										
+												
 							
 
 												
