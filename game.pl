@@ -7,9 +7,45 @@
 state(_).
 
 %To play the game
-start(TYPE):- 
-				TYPE == 'pp',
+start(_):- 	
+
+start_game(TYPE):- 
+					TYPE == 'pp',				
+					initialize(_),
+					display(_),				
+					start_pp(_).
+				
+start_game(TYPE):-
+					TYPE == 'greedy',			
+					initialize(_),
+					display(_),		
+					start_greedy(_).
+
+start_game(TYPE):-	
+					TYPE == 'easy',
+					initialize(_),
+					display(_),		
+					start_easy(_).
+				
+start_game(TYPE):-	
+					TYPE == 'cc',
+					initialize(_),
+					display(_),		
+					start_cc(_).
+
+start_game(_):- 	print('Invalid Game Type'), nl.
+						
 								
+				
+				
+				
+				
+				
+			
+				
+%initialize
+initialize(_):- 	
+
 				%set loading/start state 
 				set_state_start(_),
 				print_state(_),
@@ -28,28 +64,17 @@ start(TYPE):-
 				place_p2(11,3),
 				
 				%set state p1
-				set_state_p1(_),
-				print_state(_),
-				
-				
-				display_table(_),
-				display_p1_case(_),
-				display_p1_score(_),
-				nl,
-				display_p2_case(_),
-				display_p2_score(_),
-				
-				play_p1(4,2,2),
-				
-				display_table(_),
-				display_p1_case(_),
-				display_p1_score(_),
-				nl,
-				display_p2_case(_),
-				display_p2_score(_),
-				
-				play_p1(4,2,2).
-				
+				set_state_p1(_).
+
+%display	
+display_game(_):- 	display_table(_),
+					display_p1_case(_),
+					display_p1_score(_),
+					nl,
+					display_p2_case(_),
+					display_p2_score(_),
+					nl.		
+
 						
 %states
 get_state(Val):- state(Val).
