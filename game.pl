@@ -8,41 +8,54 @@ state(_).
 
 %To play the game
 start(_):- 	
+			repeat,
+					write('Welcome to the Gardens of IO.'), nl,
+					write('Available types: '),nl,nl,
+					write('  "pp"     - Player VS Player'), nl,
+					write('  "greedy" - Player VS Greedy Computer'),nl,
+					write('  "easy"   - Player VS Easy Computer'),nl,
+					write('  "cc"     - Computer VS Computer'),nl,nl,
+					write('Type: '),
+					read(A),
+					(A \= 'pp', A \= 'greedy', A \= 'easy', A \= 'cc' ->
+						start_game(_),
+						fail
+					;
+						start_game(A),
+						!
+					).
 
 start_game(TYPE):- 
 					TYPE == 'pp',				
 					initialize(_),
-					display(_),				
+					display_game(_),				
 					start_pp(_).
 				
 start_game(TYPE):-
 					TYPE == 'greedy',			
 					initialize(_),
-					display(_),		
+					display_game(_),		
 					start_greedy(_).
 
 start_game(TYPE):-	
 					TYPE == 'easy',
 					initialize(_),
-					display(_),		
+					display_game(_),		
 					start_easy(_).
 				
 start_game(TYPE):-	
 					TYPE == 'cc',
 					initialize(_),
-					display(_),		
+					display_game(_),		
 					start_cc(_).
 
 start_game(_):- 	print('Invalid Game Type'), nl.
 						
-								
-				
-				
-				
-				
-				
-			
-				
+start_pp(_).
+start_greedy(_).
+start_easy(_).	
+start_cc(_).
+							
 %initialize
 initialize(_):- 	
 
@@ -67,13 +80,13 @@ initialize(_):-
 				set_state_p1(_).
 
 %display	
-display_game(_):- 	display_table(_),
+display_game(_):- 	print_state(_),
+					display_table(_),
 					display_p1_case(_),
 					display_p1_score(_),
 					nl,
 					display_p2_case(_),
-					display_p2_score(_),
-					nl.		
+					display_p2_score(_).		
 
 						
 %states
