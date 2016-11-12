@@ -46,7 +46,9 @@ start(TYPE):-
 				display_p1_score(_),
 				nl,
 				display_p2_case(_),
-				display_p2_score(_).
+				display_p2_score(_),
+				
+				play_p1(4,2,2).
 				
 						
 %states
@@ -130,12 +132,32 @@ play_p1(XPlay,YPlay,Flower):-
 								length(Scorelist, Score),
 								update_score_p1(X, Y, PlayerStat, Score, P2),
 								
-								check_scores_and_set_state(_).
-								
-								
+								check_scores_and_set_state(Flower).							
 				
 %================================================================================================
-check_scores_and_set_state(_).		
+check_scores_and_set_state(Flower):- 	set_state_p2(_),
+										check_if_flower_exists_p1(Flower, ValP1),
+										check_if_flower_exists_p2(Flower, ValP2),
+										
+										score_p1(ScoreP1),
+										score_p2(ScoreP2),
+										
+										Diff is ScoreP1 - ScoreP2,
+										Val is abs(Diff),
+										
+										check_flower_and_score(ValP1, ValP2, Val).
+										
+check_flower_and_score(ValP1, ValP2, _):- 	ValP1 == 'false', ValP2 = 'false',
+												set_state_end(_).
+															
+check_flower_and_score(_, _, Diff):- 	
+												Diff >= 39,
+												set_state_end(_).
+												
+check_flower_and_score(_, _,_).
+										
+										
+										
 %check if coords exsit in list of possible plays
 check_if_valid_position(XPlay, YPlay, [], Val):- Val = 	'false',
 														XPlay = XPlay, YPlay = YPlay.
