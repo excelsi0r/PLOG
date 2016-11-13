@@ -37,7 +37,7 @@ start_game(TYPE):-
 					TYPE == 'easy',
 					initialize(_),
 					display_game(_),		
-					start_easy(_).
+					cycle_easy(_).
 				
 start_game(TYPE):-	
 					TYPE == 'cc',
@@ -47,15 +47,13 @@ start_game(TYPE):-
 
 start_game(_):- 	print('Invalid Game Type'), nl.
 
-%============================================================================
-				
-				
+%============================================================================				
 cycle_pp(_):- 	
 				get_state(STATE), 		
 				process_pp(STATE).
 
 process_pp(STATE):-		STATE \= 'end',
-						play_cc(_),
+						play_pp(_),
 						cycle_pp(_).
 						
 process_pp(_):-	write('Game has ended'), nl.
@@ -72,7 +70,17 @@ process_greedy(STATE):-	STATE \= 'end',
 process_greedy(_):-	write('Game has ended'), nl.		
 					
 %============================================================================
-start_easy(_).	
+cycle_easy(_):- 
+				get_state(STATE), 		
+				process_easy(STATE).	
+				
+process_easy(STATE):-	STATE \= 'end',
+						play_easy(_),
+						cycle_easy(_).	
+						
+process_easy(_):-	write('Game has ended'), nl.
+
+%============================================================================
 start_cc(_).
 
 %============================================================================
@@ -120,7 +128,7 @@ display_game(_):- 	print_state(_),
 					
 %============================================================================
 %play CC
-play_cc(_):- 						
+play_pp(_):- 						
 							write('Insert New X coordinate:'), read(X),
 							write('Insert New Y coordinate:'), read(Y),
 							write('Insert New Flower (y, w, r, p, b, g):'), read(F),
@@ -148,15 +156,14 @@ play_greedy(_):-
 					eval_greedy(STATE).
 					
 eval_greedy(STATE):-	STATE == 'p1',
-						play_cc(_).
+						play_pp(_).
 						
 eval_greedy(STATE):-	STATE == 'p2',
 						greedy_play(_).
 						
 eval_greedy(_).
 
-%================================================================================================
-greedy_play(_):-	write('Computer turn, Continue?'), read(_),
+greedy_play(_):-	write('Greedy computer turn, press any key to compute play'), read(_),
 					get_state(STATE),
 					get_greedy_and_play(STATE).
 					
@@ -199,7 +206,62 @@ get_greedy_play(List, XPlay, YPlay, Flower):-
 												get_x_y_flower(Play, XPlay, YPlay, Flower).
 											
 												
+%==============================================================================================
+%easy play mode
+play_easy(_):-		
+				get_state(STATE),
+				eval_easy(STATE).
+					
+eval_easy(STATE):-		STATE == 'p1',
+						play_pp(_).
+						
+eval_easy(STATE):-		STATE == 'p2',
+						easy_play(_).
+						
+eval_easy(_).	
+
+easy_play(_):-		write('Easy Computer turn, press any key to compute play'), read(_),
+					get_state(STATE),
+					get_easy_and_play(STATE).
+					
+get_easy_and_play(STATE):-		STATE == 'p2',
+
+								get_player2(X, Y, P2),
+								get_player1(_,_,P1),
+								get_list_of_plays(X,Y, List),
+								
+								get_easy_play(List, XPlay, YPlay, Flower),
+								
+								delete_flower_p2(Flower),
+								place_elem_table(XPlay, YPlay, Flower),									
+								calculate_score(XPlay, YPlay, Flower, Scorelist),
+								length(Scorelist, Score),
+								update_score_p2(X, Y, P2, Score, P1),
+								set_state_p1(_),
+								check_scores_and_set_state(Flower),
+								display_game(_).						
+							
+get_easy_and_play(_):- 	write('Computer should not play Here'), nl.
+
+
+get_easy_play(List, XPlay, YPlay, Flower):-	
+												case_p2(AvailableFlowers),
+												sort(AvailableFlowers, Fs),
 												
+												combine_lists(List, Fs, List1),
+												append(List1, [], Plays),
+												
+												length(Plays, Inteiro),
+								
+												FloatNum is float(Inteiro),
+												
+												random(0.0, FloatNum, I),
+												
+												Index is integer(I),
+												
+												nth1(Index, Plays, Play),
+												
+												get_x_y_flower(Play, XPlay, YPlay, Flower).
 %AI COMPONENT												
 %================================================================================================
 
