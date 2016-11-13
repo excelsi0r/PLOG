@@ -43,7 +43,7 @@ start_game(TYPE):-
 					TYPE == 'cc',
 					initialize(_),
 					display_game(_),		
-					start_cc(_).
+					cycle_cc(_).
 
 start_game(_):- 	print('Invalid Game Type'), nl.
 
@@ -81,7 +81,15 @@ process_easy(STATE):-	STATE \= 'end',
 process_easy(_):-	write('Game has ended'), nl.
 
 %============================================================================
-start_cc(_).
+cycle_cc(_):-	
+				get_state(STATE), 		
+				process_cc(STATE).
+				
+process_cc(STATE):-	STATE \= 'end',
+					play_cc(_),
+					cycle_cc(_).
+					
+process_cc(_):-	write('Game has ended'), nl.
 
 %============================================================================
 %convert flower to number
@@ -163,7 +171,7 @@ eval_greedy(STATE):-	STATE == 'p2',
 						
 eval_greedy(_).
 
-greedy_play(_):-	write('Greedy computer turn, press any key to compute play'), read(_),
+greedy_play(_):-	write('Greedy computer turn, press any key to compute play: '), read(_),
 					get_state(STATE),
 					get_greedy_and_play(STATE).
 					
@@ -171,6 +179,8 @@ get_greedy_and_play(STATE):-	STATE == 'p2',
 								get_player2(X, Y, P2),
 								get_player1(_,_,P1),
 								get_list_of_plays(X,Y, List),
+								
+								(List == [] -> write('Player 2 cant play, game ended, '), halt(0);
 								
 								get_greedy_play(List, XPlay, YPlay, Flower),
 								
@@ -182,7 +192,7 @@ get_greedy_and_play(STATE):-	STATE == 'p2',
 								update_score_p2(X, Y, P2, Score, P1),
 								set_state_p1(_),
 								check_scores_and_set_state(Flower),
-								display_game(_).						
+								display_game(_)).						
 							
 get_greedy_and_play(_):- 	write('Computer should not play Here'), nl.
 
@@ -220,7 +230,7 @@ eval_easy(STATE):-		STATE == 'p2',
 						
 eval_easy(_).	
 
-easy_play(_):-		write('Easy Computer turn, press any key to compute play'), read(_),
+easy_play(_):-		write('Easy Computer turn, press any key to compute play: '), read(_),
 					get_state(STATE),
 					get_easy_and_play(STATE).
 					
@@ -230,6 +240,7 @@ get_easy_and_play(STATE):-		STATE == 'p2',
 								get_player1(_,_,P1),
 								get_list_of_plays(X,Y, List),
 								
+								(List == [] -> write('Player 2 cant play, game ended, '), halt(0);
 								get_easy_play(List, XPlay, YPlay, Flower),
 								
 								delete_flower_p2(Flower),
@@ -239,7 +250,7 @@ get_easy_and_play(STATE):-		STATE == 'p2',
 								update_score_p2(X, Y, P2, Score, P1),
 								set_state_p1(_),
 								check_scores_and_set_state(Flower),
-								display_game(_).						
+								display_game(_)).						
 							
 get_easy_and_play(_):- 	write('Computer should not play Here'), nl.
 
@@ -262,9 +273,66 @@ get_easy_play(List, XPlay, YPlay, Flower):-
 												nth1(Index, Plays, Play),
 												
 												get_x_y_flower(Play, XPlay, YPlay, Flower).
-%AI COMPONENT												
+												
 %================================================================================================
+%play cc type
+play_cc(_):-					
+				get_state(STATE),
+				eval_cc(STATE).
+					
+eval_cc(STATE):-		STATE == 'p1',
+						greedy_c1(_).
+						
+eval_cc(STATE):-		STATE == 'p2',
+						greedy_play(_).
+						
+greedy_c1(_):-		write('Greed Computer 1 turn, press any key to compute play: '), read(_),
+					get_state(STATE),
+					get_greedy_and_play_c1(STATE).
+					
+get_greedy_and_play_c1(STATE):-	
+								STATE == 'p1',
+								get_player1(X, Y, P1),
+								get_player2(_,_,P2),
+								get_list_of_plays(X,Y, List),
+								
+								(List == [] -> write('Player 1 cant play, game ended, '), halt(0);
+								
+								get_greedy_play_c1(List, XPlay, YPlay, Flower),
+								
+								
+								delete_flower_p1(Flower),
+								place_elem_table(XPlay, YPlay, Flower),									
+								calculate_score(XPlay, YPlay, Flower, Scorelist),
+								length(Scorelist, Score),
+								update_score_p1(X, Y, P1, Score, P2),
+								set_state_p2(_),
+								check_scores_and_set_state(Flower),
+								display_game(_)).						
+							
+get_greedy_and_play_c1(_):- 	write('Computer should not play Here'), nl.
 
+get_greedy_play_c1(List, XPlay, YPlay, Flower):-	
+												case_p1(AvailableFlowers),
+												sort(AvailableFlowers, Fs),
+												
+												combine_lists(List, Fs, List1),
+												append(List1, [], Plays),
+												
+												%print(Plays), nl,
+												simulate_plays(Plays, ScoreList),
+												
+												
+												%print(Scorelist), nl,
+												max_member(Biggest, ScoreList),
+												
+												nth1(Index, ScoreList, Biggest),
+												
+												nth1(Index, Plays, Play),
+												get_x_y_flower(Play, XPlay, YPlay, Flower).
+											
+%================================================================================================
+%AI COMPONENT	
 combine_lists(_, [], _).	
 combine_lists(List, [Flower | Rest], Plays):- 	
 												combine_flower(List, Flower, List1),
@@ -306,12 +374,13 @@ get_flower([Flower1 | _], Flower):-	Flower is Flower1.
 play_p1(XPlay,YPlay,Flower):-
 								
 								get_player1(X,Y,PlayerStat),								
-								get_list_of_plays(X,Y,List),									
+								get_list_of_plays(X,Y,List),	
+								(List == [] -> write('Player 1 cant play, game ended, '), halt(0);
 								get_player2(_,_, P2),
 								
 								check_if_valid_position(XPlay,YPlay,List,ValPosition),
 								check_if_flower_exists_p1(Flower, ValFlower),							
-								process_p1(XPlay,YPlay,Flower,X,Y,PlayerStat,P2,ValPosition, ValFlower).
+								process_p1(XPlay,YPlay,Flower,X,Y,PlayerStat,P2,ValPosition, ValFlower)).
 								
 process_p1(_,_,_,_,_,_,_,ValPosition, _):-	
 
@@ -339,12 +408,13 @@ process_p1(XPlay,YPlay,Flower,X,Y,PlayerStat,P2,_, _):-
 play_p2(XPlay,YPlay,Flower):-
 								
 								get_player2(X,Y,PlayerStat),								
-								get_list_of_plays(X,Y,List),									
+								get_list_of_plays(X,Y,List),
+								(List == [] -> write('Player 2 cant play, game ended, '), halt(0);
 								get_player1(_,_, P1),
 								
 								check_if_valid_position(XPlay,YPlay,List,ValPosition),
 								check_if_flower_exists_p2(Flower, ValFlower),							
-								process_p2(XPlay,YPlay,Flower,X,Y,PlayerStat,P1,ValPosition, ValFlower).
+								process_p2(XPlay,YPlay,Flower,X,Y,PlayerStat,P1,ValPosition, ValFlower)).
 								
 process_p2(_,_,_,_,_,_,_,ValPosition, _):-	
 
