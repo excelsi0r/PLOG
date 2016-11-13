@@ -54,7 +54,7 @@ delete_flower_p1(Flower):- 	case_p1(CASE),
 							
 delete_flower_p2(Flower):- 	case_p2(CASE),
 							select(Flower, CASE, List),
-							asserta(case_p1(List)).
+							asserta(case_p2(List)).
 
 print_case([]).
 print_case([Elem | Rest]):- 
