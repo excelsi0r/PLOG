@@ -31,7 +31,7 @@ start_game(TYPE):-
 					TYPE == 'greedy',			
 					initialize(_),
 					display_game(_),		
-					start_greedy(_).
+					cycle_greedy(_).
 
 start_game(TYPE):-	
 					TYPE == 'easy',
@@ -61,7 +61,17 @@ process_pp(STATE):-		STATE \= 'end',
 process_pp(_):-	write('Game has ended'), nl.
 
 %============================================================================								
-start_greedy(_).
+cycle_greedy(_):-	
+					get_state(STATE), 		
+					process_greedy(STATE).	
+
+process_greedy(STATE):-	STATE \= 'end',
+						play_greedy(_),
+						cycle_greedy(_).
+						
+process_greedy(_):-	write('Game has ended'), nl.		
+					
+%============================================================================
 start_easy(_).	
 start_cc(_).
 
@@ -132,6 +142,104 @@ eval_play(X, Y, Flower, STATE):-	X > 1, X < 11, Y > 1, Y < 11,
 eval_play(_, _, _, _):-	write('Invalid Coords to place'), nl.
 							
 %================================================================================================	
+%play greedy type
+play_greedy(_):-	
+					get_state(STATE),
+					eval_greedy(STATE).
+					
+eval_greedy(STATE):-	STATE == 'p1',
+						play_cc(_).
+						
+eval_greedy(STATE):-	STATE == 'p2',
+						greedy_play(_).
+						
+eval_greedy(_).
+
+%================================================================================================
+greedy_play(_):-	write('Computer turn, Continue?'), read(_),
+					get_state(STATE),
+					get_greedy_and_play(STATE).
+					
+get_greedy_and_play(STATE):-	STATE == 'p2',
+								get_player2(X, Y, P2),
+								get_player1(_,_,P1),
+								get_list_of_plays(X,Y, List),
+								
+								get_greedy_play(List, XPlay, YPlay, Flower),
+								
+								
+								delete_flower_p2(Flower),
+								place_elem_table(XPlay, YPlay, Flower),									
+								calculate_score(XPlay, YPlay, Flower, Scorelist),
+								length(Scorelist, Score),
+								update_score_p2(X, Y, P2, Score, P1),
+								set_state_p1(_),
+								check_scores_and_set_state(Flower),
+								display_game(_).						
+							
+get_greedy_and_play(_):- 	write('Computer should not play Here'), nl.
+
+get_greedy_play(List, XPlay, YPlay, Flower):-	
+												case_p2(AvailableFlowers),
+												sort(AvailableFlowers, Fs),
+												
+												combine_lists(List, Fs, List1),
+												append(List1, [], Plays),
+												
+												%print(Plays), nl,
+												simulate_plays(Plays, ScoreList),
+												
+												
+												%print(Scorelist), nl,
+												max_member(Biggest, ScoreList),
+												
+												nth1(Index, ScoreList, Biggest),
+												
+												nth1(Index, Plays, Play),
+												get_x_y_flower(Play, XPlay, YPlay, Flower).
+											
+												
+												
+%AI COMPONENT												
+%================================================================================================
+
+combine_lists(_, [], _).	
+combine_lists(List, [Flower | Rest], Plays):- 	
+												combine_flower(List, Flower, List1),
+												combine_lists(List, Rest, List2),
+												append(List1, List2, Plays).
+											
+combine_flower([],_,_).
+combine_flower([[X | Y] | Rest], Flower, List):-	append([X], [Y], Point),
+													append(Point, [Flower], Play),
+													
+													combine_flower(Rest, Flower, List2),
+													append(List2, [Play], List).
+
+simulate_plays([], Index):-	append([],[], Index).	
+simulate_plays([Play | Rest], Index):-	
+										simulate_board_play(Play, Score),
+										simulate_plays(Rest, List1),
+										append([Score],List1, Index).
+										
+									
+simulate_board_play(Play,Score):-	
+											get_x_y_flower(Play, X, Y, Flower),
+											calculate_score(X, Y, Flower, S),
+											length(S, Score).
+											
+
+get_x_y_flower([X1 | Rest], X, Y, Flower):-	X is X1,
+											get_y_flower(Rest, Y, Flower).
+											
+get_y_flower([Y1 | Rest], Y, Flower):-	Y is Y1,
+										get_flower(Rest, Flower).
+										
+get_flower([Flower1 | _], Flower):-	Flower is Flower1.
+							
+							
+
+%================================================================================================
 %player 1 move play
 play_p1(XPlay,YPlay,Flower):-
 								
