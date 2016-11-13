@@ -8,7 +8,7 @@ state(_).
 
 %To play the game
 start(_):- 	
-			repeat,
+
 					write('Welcome to the Gardens of IO.'), nl,
 					write('Available types: '),nl,nl,
 					write('  "pp"     - Player VS Player'), nl,
@@ -17,19 +17,13 @@ start(_):-
 					write('  "cc"     - Computer VS Computer'),nl,nl,
 					write('Type: '),
 					read(A),
-					(A \= 'pp', A \= 'greedy', A \= 'easy', A \= 'cc' ->
-						start_game(_),
-						fail
-					;
-						start_game(A),
-						!
-					).
+					start_game(A).
 
 start_game(TYPE):- 
-					TYPE == 'pp',				
+					TYPE == 'pp',					
 					initialize(_),
-					display_game(_),				
-					start_pp(_).
+					display_game(_),
+					cycle_pp(_).
 				
 start_game(TYPE):-
 					TYPE == 'greedy',			
@@ -50,18 +44,46 @@ start_game(TYPE):-
 					start_cc(_).
 
 start_game(_):- 	print('Invalid Game Type'), nl.
+				
+				
+cycle_pp(_):- 	
+				get_state(STATE), 		
+				process_pp(STATE).
+
+process_pp(STATE):-		STATE \= 'end',
+						play_cc(_),
+						cycle_pp(_).
 						
-start_pp(_).
+process_pp(_).
+
+				
+
+
+
+				
+							
+					
+					
 start_greedy(_).
 start_easy(_).	
 start_cc(_).
+
+%convert flower to number
+convert_flower_number(F, FN):- 	F == 'w', FN is 1.
+convert_flower_number(F, FN):- 	F == 'y', FN is 2.
+convert_flower_number(F, FN):- 	F == 'g', FN is 3.
+convert_flower_number(F, FN):- 	F == 'b', FN is 4.
+convert_flower_number(F, FN):- 	F == 'p', FN is 5.
+convert_flower_number(F, FN):- 	F == 'r', FN is 6.
+convert_flower_number(_, FN):- 	FN is -1.
 							
 %initialize
 initialize(_):- 	
 
 				%set loading/start state 
+				set_state_end(_),
 				set_state_start(_),
-				print_state(_),
+				
 				
 				%reset content
 				reset_board(_),
@@ -88,50 +110,20 @@ display_game(_):- 	print_state(_),
 					display_p2_case(_),
 					display_p2_score(_).		
 
-						
-%states
-get_state(Val):- state(Val).
-					
-set_state_start(_):- asserta(state('start')).
-set_state_p1(_):- asserta(state('p1')).
-set_state_p2(_):- asserta(state('p2')).
-set_state_end(_):- asserta(state('end')).
+%play CC
+play_cc(_):- 						
+							write('Insert New X coordinate:'), read(X),
+							write('Insert New Y coordinate:'), read(Y),
+							write('Insert New Flower (y, w, r, p, b, g):'), read(F),
+							
+							convert_flower_number(F, Flower),
+							
+							
+							X1 is X + 2, Y1 is Y + 2,
+							print(X1), print(' '), print(Y1), print(' '), print(Flower),nl.
+							
 
-
-print_state(_):-  	
-					state(Val),
-					Val == 'p1', nl,
-					print('Player 1 or player "F" make your move.'), nl.
-					
-print_state(_):-  	
-					state(Val),
-					Val == 'p2', nl,
-					print('Player 2 or player "S" make your move.'), nl.
-					
-print_state(_):-  	
-					state(Val),
-					Val == 'end', nl,
-					print('Game is finished.'), nl.
-					
-print_state(_):-  	
-					state(Val),
-					Val == 'start', nl,
-					print('Loading Game ...'), nl.
-					
-%place player in positions
-place_p1(X,Y):- 
-				get_elem(X, Y, Val),
-				Val1 is integer(Val),
-				Elem is Val1 + 100,
-				place_elem_table(X, Y, Elem).
-				
-place_p2(X,Y):- 
-				get_elem(X, Y, Val),
-				Val1 is integer(Val),
-				Elem is Val1 + 200,
-				place_elem_table(X, Y, Elem).
-
-				
+	
 %player move play
 play_p1(XPlay,YPlay,Flower):- 
 								get_state(STATE),
@@ -172,7 +164,51 @@ play_p1(XPlay,YPlay,Flower):-
 								
 								check_scores_and_set_state(Flower).							
 				
-%================================================================================================
+%================================================================================================				
+%states
+get_state(Val):- state(Val).
+
+set_state_end(_):- asserta(state('end')).					
+set_state_start(_):- asserta(state('start')).
+set_state_p1(_):- asserta(state('p1')).
+set_state_p2(_):- asserta(state('p2')).
+
+
+
+print_state(_):-  	
+					state(Val),
+					Val == 'p1', nl,
+					print('Player 1 or player "F" make your move.'), nl.
+					
+print_state(_):-  	
+					state(Val),
+					Val == 'p2', nl,
+					print('Player 2 or player "S" make your move.'), nl.
+					
+print_state(_):-  	
+					state(Val),
+					Val == 'end', nl,
+					print('Game is finished.'), nl.
+					
+print_state(_):-  	
+					state(Val),
+					Val == 'start', nl,
+					print('Loading Game ...'), nl.
+					
+%place player in positions
+place_p1(X,Y):- 
+				get_elem(X, Y, Val),
+				Val1 is integer(Val),
+				Elem is Val1 + 100,
+				place_elem_table(X, Y, Elem).
+				
+place_p2(X,Y):- 
+				get_elem(X, Y, Val),
+				Val1 is integer(Val),
+				Elem is Val1 + 200,
+				place_elem_table(X, Y, Elem).
+
+
 check_scores_and_set_state(Flower):- 	set_state_p2(_),
 										check_if_flower_exists_p1(Flower, ValP1),
 										check_if_flower_exists_p2(Flower, ValP2),
