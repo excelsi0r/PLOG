@@ -219,7 +219,7 @@ get_greedy_and_play(STATE):-	STATE == 'p2',
 							
 get_greedy_and_play(_):- 	write('Computer should not play Here'), nl.
 
-%creates a list with all the possible plays, combining all X,Y coordenates possible to play with each flower type available type
+%creates a list with all the possible plays, combining all X,Y coordenates possible to play with each flower type available 
 %in the case of player 2. simulates the score of every play, gets the one with the biggest simulated score and returns that play
 get_greedy_play(List, XPlay, YPlay, Flower):-	
 												case_p2(AvailableFlowers),
@@ -231,13 +231,13 @@ get_greedy_play(List, XPlay, YPlay, Flower):-
 												%print(Plays), nl,
 												simulate_plays(Plays, ScoreList),
 												
-												
 												%print(Scorelist), nl,
 												max_member(Biggest, ScoreList),
 												
 												nth1(Index, ScoreList, Biggest),
 												
 												nth1(Index, Plays, Play),
+												
 												get_x_y_flower(Play, XPlay, YPlay, Flower).
 											
 												
